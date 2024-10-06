@@ -8,6 +8,7 @@
         body {
             font-family: Arial, sans-serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -15,6 +16,7 @@
         }
         .question-box {
             text-align: center;
+            margin-bottom: 20px;
         }
         .question {
             font-size: 1.5rem;
@@ -29,6 +31,17 @@
             font-size: 1.5rem;
             margin-top: 20px;
         }
+        .history {
+            width: 80%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
+        .history-item {
+            margin-bottom: 10px;
+        }
+        .history-item strong {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -37,6 +50,11 @@
     <div id="question" class="question"></div>
     <div id="options" class="options"></div>
     <div id="result" class="result"></div>
+</div>
+
+<div class="history">
+    <h2>質問と回答履歴</h2>
+    <div id="history-list"></div>
 </div>
 
 <script>
@@ -100,6 +118,7 @@
     };
 
     let currentStep = '1'; // 最初の質問のステップ
+    let historyList = []; // 質問と回答の履歴
 
     // 質問とオプションを表示
     function showQuestion(step) {
@@ -118,6 +137,9 @@
             const button = document.createElement('button');
             button.innerHTML = option === 'yes' ? 'はい' : 'いいえ';
             button.onclick = function() {
+                // 質問と回答を履歴に追加
+                addToHistory(questions[step].question, button.innerHTML);
+
                 if (typeof nextStep === 'string') {
                     // 次の質問がある場合
                     if (nextStep.startsWith('result')) {
@@ -145,6 +167,15 @@
 
         // 結果を表示
         resultElement.innerHTML = results[resultKey];
+    }
+
+    // 履歴に追加する関数
+    function addToHistory(question, answer) {
+        const historyListElement = document.getElementById('history-list');
+        const historyItem = document.createElement('div');
+        historyItem.classList.add('history-item');
+        historyItem.innerHTML = `<strong>質問:</strong> ${question}<br><strong>回答:</strong> ${answer}`;
+        historyListElement.appendChild(historyItem);
     }
 
     // 初期化: 最初の質問を表示
