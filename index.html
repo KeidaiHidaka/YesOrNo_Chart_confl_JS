@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>質問フロー</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .question-box {
+            text-align: center;
+        }
+        .question {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        .options button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+        }
+        .result {
+            font-size: 1.5rem;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="question-box">
+    <div id="question" class="question"></div>
+    <div id="options" class="options"></div>
+    <div id="result" class="result"></div>
+</div>
+
+<script>
+    // 質問と分岐を定義（質問番号を1, 2-1, 2-2, 3-1, 3-2に変更）
+    const questions = {
+        '1': {
+            question: "質問1: コーヒーは好きですか？",
+            options: {
+                yes: '2-1',
+                no: '2-2'
+            }
+        },
+        '2-1': {
+            question: "質問2-1: ミルクは入れますか？",
+            options: {
+                yes: '3-1',
+                no: '3-1'
+            }
+        },
+        '2-2': {
+            question: "質問2-2: 紅茶は好きですか？",
+            options: {
+                yes: '3-2',
+                no: '3-2'
+            }
+        },
+        '3-1': {
+            question: "質問3-1: 暑い飲み物が好きですか？",
+            options: {
+                yes: '4-1',
+                no: '4-1'
+            }
+        },
+        '3-2': {
+            question: "質問3-2: 暑い飲み物が好きですか？",
+            options: {
+                yes: '4-2',
+                no: '4-2'
+            }
+        },
+        '4-1': {
+            question: "質問4-1: 甘い飲み物が好きですか？",
+            options: {
+                yes: 'result_sweet',
+                no: 'result_bitter'
+            }
+        },
+        '4-2': {
+            question: "質問4-2: 甘い飲み物が好きですか？",
+            options: {
+                yes: 'result_sweet',
+                no: 'result_bitter'
+            }
+        }
+    };
+
+    // 結果の定義
+    const results = {
+        result_sweet: "あなたは甘い飲み物が好きですね！",
+        result_bitter: "あなたは甘くない飲み物が好きですね！"
+    };
+
+    let currentStep = '1'; // 最初の質問のステップ
+
+    // 質問とオプションを表示
+    function showQuestion(step) {
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+
+        // 質問を表示
+        questionElement.innerHTML = questions[step].question;
+
+        // オプションをクリア
+        optionsElement.innerHTML = '';
+
+        // オプションボタンを生成
+        for (let option in questions[step].options) {
+            let nextStep = questions[step].options[option];
+            const button = document.createElement('button');
+            button.innerHTML = option === 'yes' ? 'はい' : 'いいえ';
+            button.onclick = function() {
+                if (typeof nextStep === 'string') {
+                    // 次の質問がある場合
+                    if (nextStep.startsWith('result')) {
+                        // 結果を表示
+                        showResult(nextStep);
+                    } else {
+                        // 次の質問へ進む
+                        showQuestion(nextStep);
+                    }
+                }
+            };
+            optionsElement.appendChild(button);
+        }
+    }
+
+    // 結果を表示
+    function showResult(resultKey) {
+        const resultElement = document.getElementById('result');
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+
+        // 質問とオプションを非表示にする
+        questionElement.style.display = 'none';
+        optionsElement.style.display = 'none';
+
+        // 結果を表示
+        resultElement.innerHTML = results[resultKey];
+    }
+
+    // 初期化: 最初の質問を表示
+    showQuestion(currentStep);
+</script>
+
+</body>
+</html>
